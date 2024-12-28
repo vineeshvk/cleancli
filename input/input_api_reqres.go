@@ -39,7 +39,7 @@ func getApiResponseModel(dataDir string) string {
 
 	selectedResponsePath := responseModelList[selectedIndex]
 
-	fmt.Println(constants.InputSetIcon, "  Response model is set to "+result)
+	fmt.Println(constants.InputSetIcon, " Response model is set to "+result)
 
 	return selectedResponsePath
 }
@@ -79,7 +79,7 @@ func getApiRequestModel(dataDir string) string {
 
 	selectedRequestPath := requestModelList[selectedIndex]
 
-	fmt.Println(constants.InputSetIcon, "  Request model is set to "+result)
+	fmt.Println(constants.InputSetIcon, " Request model is set to "+result)
 
 	return selectedRequestPath
 }

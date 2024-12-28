@@ -2,6 +2,7 @@ package write
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/models"
@@ -10,7 +11,7 @@ import (
 )
 
 func WriteDataSource(dataDir string, apiInfo models.ApiInfoModel) {
-	var dataSourceDir = dataDir + constants.ApiDataSourcePath
+	var dataSourceDir = filepath.Join(dataDir, constants.ApiDataSourcePath)
 
 	fmt.Sprintln(constants.LoadingIcon, " Working on data source files...")
 
@@ -19,11 +20,16 @@ func WriteDataSource(dataDir string, apiInfo models.ApiInfoModel) {
 }
 
 func writeDataSourceAbstractFile(dataSourceDir string, apiInfo models.ApiInfoModel) {
-	dataSourceFilePath := dataSourceDir + apiInfo.GroupName + "/" + apiInfo.GroupName + "_data_source.dart"
+	dataSourceFilePath := filepath.Join(
+		dataSourceDir,
+		apiInfo.GroupName,
+		apiInfo.GroupName+"_data_source.dart",
+	)
 
 	dataSourceFileClassText := fmt.Sprintf(templates.DataSourceFileClass, apiInfo.GetApiClassName())
 
 	utils.CreateAndInsertIfFileNotExist(dataSourceFilePath, dataSourceFileClassText)
+	fmt.Println()
 
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
 	requestClassName := apiInfo.ApiClassNameValue.RequestModelClassName
@@ -43,15 +49,26 @@ func writeDataSourceAbstractFile(dataSourceDir string, apiInfo models.ApiInfoMod
 		dataSourceFileFunction,
 		getReqResImportString(apiInfo),
 	)
+	fmt.Println()
 
 }
 
 func writeDataSourceImplFile(dataSourceDir string, apiInfo models.ApiInfoModel) {
-	dataSourceImplFilePath := dataSourceDir + apiInfo.GroupName + "/remote/" + apiInfo.GroupName + "_data_source_impl.dart"
+	dataSourceImplFilePath := filepath.Join(
+		dataSourceDir,
+		apiInfo.GroupName,
+		"/remote/",
+		apiInfo.GroupName+"_data_source_impl.dart",
+	)
 
-	dataSourceImplFileClassText := fmt.Sprintf(templates.DataSourceImplFileClass, apiInfo.GroupName, apiInfo.GetApiClassName())
+	dataSourceImplFileClassText := fmt.Sprintf(
+		templates.DataSourceImplFileClass,
+		apiInfo.GroupName,
+		apiInfo.GetApiClassName(),
+	)
 
 	utils.CreateAndInsertIfFileNotExist(dataSourceImplFilePath, dataSourceImplFileClassText)
+	fmt.Println()
 
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
 	requestClassName := apiInfo.ApiClassNameValue.RequestModelClassName
@@ -74,6 +91,7 @@ func writeDataSourceImplFile(dataSourceDir string, apiInfo models.ApiInfoModel) 
 		dataSourceImplFileFunction,
 		getReqResImportString(apiInfo),
 	)
+	fmt.Println()
 
 }
 

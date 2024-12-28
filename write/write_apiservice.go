@@ -21,7 +21,7 @@ func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
 	requestClassName := apiInfo.ApiClassNameValue.RequestModelClassName
 
 	if requestClassName != "" {
-		requestClassName = apiInfo.GetMethodAnnotation() + requestClassName + " data"
+		requestClassName = apiInfo.GetMethodAnnotation() + " " + requestClassName + " data"
 	}
 
 	// TODO: Handle path params
@@ -40,5 +40,7 @@ func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
 		fmt.Printf("Couldn't write to file : %s", err.Error())
 		os.Exit(1)
 	}
+
+	fmt.Println()
 
 }

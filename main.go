@@ -17,6 +17,7 @@ func main() {
 	write.WriteApiService(mainDirectoryModel.GetApiServiceRoute(), apiInfo)
 	write.WriteDataSource(mainDirectoryModel.DataDir, apiInfo)
 	write.WriteRepo(mainDirectoryModel, apiInfo)
+	write.WriteUseCase(mainDirectoryModel, apiInfo)
 
 	fmt.Println(constants.CompletedIcon, "Completed adding API.")
 
