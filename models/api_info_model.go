@@ -3,9 +3,9 @@ package models
 import "github.com/vineeshvk/cleancli/utils"
 
 type ApiInfoModel struct {
-	ApiUrl string
-	Method string
-	Name   string
+	ApiUrl       string
+	Method       string
+	FunctionName string
 
 	ResponseModelPath string
 	RequestModelPath  string

@@ -12,6 +12,8 @@ import (
 
 func GetAPIInfos(mainDirModel models.MainDirectoryModel) models.ApiInfoModel {
 
+	fmt.Println(constants.LoadingIcon, " Getting API Details:")
+
 	apiUrl := getAPIUrlInput()
 	method := getAPIMethodType()
 	name := getAPIName()
@@ -23,7 +25,7 @@ func GetAPIInfos(mainDirModel models.MainDirectoryModel) models.ApiInfoModel {
 	apiInfo := models.ApiInfoModel{
 		ApiUrl:            apiUrl,
 		Method:            method,
-		Name:              name,
+		FunctionName:      name,
 		ResponseModelPath: responseModelPath,
 		RequestModelPath:  requestModelPath,
 		GroupName:         groupName,
@@ -48,7 +50,7 @@ func getAPIUrlInput() string {
 		os.Exit(1)
 	}
 
-	fmt.Println("> API url set to " + result)
+	fmt.Println(constants.InputSetIcon, " API url set to "+result)
 
 	return utils.RemoveStringSpaces(result)
 }
@@ -67,7 +69,7 @@ func getAPIMethodType() string {
 		os.Exit(1)
 	}
 
-	fmt.Println("> API method set to " + result)
+	fmt.Println(constants.InputSetIcon, " API method set to "+result)
 
 	return utils.RemoveStringSpaces(result)
 
@@ -75,7 +77,7 @@ func getAPIMethodType() string {
 
 func getAPIName() string {
 	prompt := promptui.Prompt{
-		Label:       "Enter Name for Function (Will be used in all the files)",
+		Label:       "Enter Name for Function",
 		AllowEdit:   true,
 		Validate:    utils.ValidateEmptyString,
 		HideEntered: true,
@@ -87,7 +89,7 @@ func getAPIName() string {
 		os.Exit(1)
 	}
 
-	fmt.Println("> Function Name is set to " + result)
+	fmt.Println(constants.InputSetIcon, " Function Name is set to "+result)
 
 	result = utils.ConvertToCamelCase(utils.RemoveStringSpaces(result))
 

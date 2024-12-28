@@ -5,11 +5,14 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/models"
 	"github.com/vineeshvk/cleancli/utils"
 )
 
 func ValidateRootDirectories() models.MainDirectoryModel {
+	fmt.Println(constants.EvalutingIcon, " Evaluating flutter project...")
+
 	validateRootPubSpecPresent()
 
 	dataDir := validateDataPubSpecPresent()
@@ -26,7 +29,7 @@ func validateRootPubSpecPresent() bool {
 		os.Exit(1)
 	}
 
-	fmt.Println("pubspec.yaml found in the root of the project")
+	fmt.Println(constants.SuccessIcon, " pubspec.yaml found in the root of the project")
 
 	return exist
 }
@@ -38,7 +41,7 @@ func validateDataPubSpecPresent() string {
 		os.Exit(1)
 	}
 
-	fmt.Println("pubspec.yaml found in the data module at: ", dataDir)
+	fmt.Println(constants.SuccessIcon, " pubspec.yaml found in the data module at: ", dataDir)
 
 	return filepath.Dir(dataDir)
 }
@@ -50,7 +53,7 @@ func validateDomainPubSpecPresent() string {
 		os.Exit(1)
 	}
 
-	fmt.Println("pubspec.yaml found in the domain module at: ", domainDir)
+	fmt.Println(constants.SuccessIcon, " pubspec.yaml found in the domain module at: ", domainDir)
 
 	return filepath.Dir(domainDir)
 }

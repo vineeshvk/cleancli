@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/manifoldco/promptui"
+	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/readdir"
 	"github.com/vineeshvk/cleancli/utils"
 )
@@ -24,6 +25,7 @@ func getApiResponseModel(dataDir string) string {
 		Label:             "Select the Response model from List",
 		Size:              10,
 		StartInSearchMode: true,
+		HideSelected:      true,
 		Searcher: func(input string, index int) bool {
 			return utils.Search(responseFileList[index], input)
 		},
@@ -37,7 +39,7 @@ func getApiResponseModel(dataDir string) string {
 
 	selectedResponsePath := responseModelList[selectedIndex]
 
-	fmt.Println("> Response model is set to " + result)
+	fmt.Println(constants.InputSetIcon, "  Response model is set to "+result)
 
 	return selectedResponsePath
 }
@@ -55,6 +57,7 @@ func getApiRequestModel(dataDir string) string {
 		Items:             selectInputList,
 		Label:             "Select the Request model from List",
 		Size:              10,
+		HideSelected:      true,
 		StartInSearchMode: true,
 		Searcher: func(input string, index int) bool {
 			return utils.Search(selectInputList[index], input)
@@ -76,7 +79,7 @@ func getApiRequestModel(dataDir string) string {
 
 	selectedRequestPath := requestModelList[selectedIndex]
 
-	fmt.Println("> Request model is set to " + result)
+	fmt.Println(constants.InputSetIcon, "  Request model is set to "+result)
 
 	return selectedRequestPath
 }

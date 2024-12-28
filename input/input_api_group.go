@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/manifoldco/promptui"
+	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/utils"
 )
 
@@ -22,7 +23,7 @@ func getApiGroupName() string {
 		os.Exit(1)
 	}
 
-	fmt.Println("> Group Name is set to " + result)
+	fmt.Println(constants.InputSetIcon, " Group Name is set to "+result)
 
 	result = utils.RemoveStringSpaces(result)
 
