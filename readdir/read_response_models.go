@@ -14,7 +14,6 @@ func ReadApiResponseModels(dataDir string) []string {
 }
 
 func ReadApiRequestModels(dataDir string) []string {
-	responseDir := filepath.Join(dataDir, constants.ApiRequestEntityPath)
-
-	return utils.GetMatchingFilesFromDir(responseDir, `\w+.(?!g)\.dart$`)
+	requestDir := filepath.Join(dataDir, constants.ApiRequestEntityPath)
+	return utils.GetMatchingFilesFromDir(requestDir, `^[\w_/]+\.dart$`)
 }
