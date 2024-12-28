@@ -11,3 +11,5 @@ var ApiRequestEntityPath = "lib/entity/request/"
 var ApiServicePath = "/lib/network/api_service.dart"
 
 var ApiDataSourcePath = "/lib/source/"
+
+var ApiRepositoryPath = "/lib/repository/"

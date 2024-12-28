@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/vineeshvk/cleancli/template"
+	"github.com/vineeshvk/cleancli/templates"
 )
 
 func InsertToFileBeforeLastBrace(filePath string, newData string, topData string) error {
@@ -110,5 +110,5 @@ func CreateAndInsertIfFileNotExist(fileroute string, data string) {
 
 func GetImportRoute(route string) string {
 	packageDir := strings.ReplaceAll(filepath.ToSlash(route), "/lib/", "/")
-	return fmt.Sprintf(template.ImportStatement+"\n", packageDir)
+	return fmt.Sprintf(templates.ImportStatement+"\n", packageDir)
 }

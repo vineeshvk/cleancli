@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/models"
-	"github.com/vineeshvk/cleancli/template"
+	"github.com/vineeshvk/cleancli/templates"
 	"github.com/vineeshvk/cleancli/utils"
 )
 
 func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
+
+	fmt.Sprintln(constants.LoadingIcon, " Working on api_service file...")
 
 	reqImport, resImport := apiInfo.GetRequestResponseImport()
 	importString := reqImport + "\n" + resImport
@@ -23,11 +26,11 @@ func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
 
 	// TODO: Handle path params
 	apiString := fmt.Sprintf(
-		template.ApiServiceFunction,
+		templates.ApiServiceFunction,
 		apiInfo.Method,
 		apiInfo.ApiUrl,
 		responseClassName,
-		apiInfo.Name,
+		apiInfo.FunctionName,
 		requestClassName,
 	)
 
