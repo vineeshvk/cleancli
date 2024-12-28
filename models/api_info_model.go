@@ -10,6 +10,7 @@ type ApiInfoModel struct {
 	ResponseModelPath string
 	RequestModelPath  string
 
+	// Group or Folder name
 	GroupName string
 
 	ApiClassNameValue ApiClassNamesModel

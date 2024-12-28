@@ -2,6 +2,7 @@ package write
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/models"
@@ -20,11 +21,16 @@ func WriteRepo(mainDirModel models.MainDirectoryModel, apiInfo models.ApiInfoMod
 }
 
 func writeRepoAbstractFile(domainRepoDir string, apiInfo models.ApiInfoModel) {
-	dataRepoFilePath := domainRepoDir + apiInfo.GroupName + "/" + apiInfo.GroupName + "_repository.dart"
+	dataRepoFilePath := filepath.Join(
+		domainRepoDir,
+		apiInfo.GroupName+"_repository.dart",
+	)
 
 	repoFileClassText := fmt.Sprintf(templates.RepoFileClass, apiInfo.GetApiClassName())
 
 	utils.CreateAndInsertIfFileNotExist(dataRepoFilePath, repoFileClassText)
+
+	fmt.Println()
 
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
 	requestClassName := apiInfo.ApiClassNameValue.RequestModelClassName
@@ -44,14 +50,21 @@ func writeRepoAbstractFile(domainRepoDir string, apiInfo models.ApiInfoModel) {
 		repoFileFunction,
 		getReqResImportString(apiInfo),
 	)
+
+	fmt.Println()
+
 }
 
 func writeRepoImplFile(dataRepoDir string, apiInfo models.ApiInfoModel) {
-	dataRepoImplFilePath := dataRepoDir + apiInfo.GroupName + "/" + apiInfo.GroupName + "_repository_impl.dart"
+	dataRepoImplFilePath := filepath.Join(
+		dataRepoDir,
+		apiInfo.GroupName+"_repository_impl.dart",
+	)
 
 	repoImplFileClassText := fmt.Sprintf(templates.RepoImplFileClass, apiInfo.GroupName, apiInfo.GetApiClassName())
 
 	utils.CreateAndInsertIfFileNotExist(dataRepoImplFilePath, repoImplFileClassText)
+	fmt.Println()
 
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
 	requestClassName := apiInfo.ApiClassNameValue.RequestModelClassName
@@ -74,4 +87,6 @@ func writeRepoImplFile(dataRepoDir string, apiInfo models.ApiInfoModel) {
 		repoFileFunction,
 		getReqResImportString(apiInfo),
 	)
+	fmt.Println()
+
 }

@@ -13,3 +13,5 @@ var ApiServicePath = "/lib/network/api_service.dart"
 var ApiDataSourcePath = "/lib/source/"
 
 var ApiRepositoryPath = "/lib/repository/"
+
+var UseCasePath= "/lib/usecase/"

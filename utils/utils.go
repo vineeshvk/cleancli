@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 )
@@ -47,4 +48,11 @@ func CapitilizeFirst(text string) string {
 	runes := []rune(text)
 	runes[0] = unicode.ToUpper(runes[0])
 	return string(runes)
+}
+
+func CamelToSnake(camel string) string {
+	re := regexp.MustCompile("([A-Z])")
+	return re.ReplaceAllStringFunc(camel, func(s string) string {
+		return "_" + strings.ToLower(s)
+	})
 }
