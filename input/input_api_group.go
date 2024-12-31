@@ -11,7 +11,7 @@ import (
 
 func getApiGroupName() string {
 	prompt := promptui.Prompt{
-		Label:       "Enter Name for Group (Snake case) (Will be folder/file names of ds, repo, usecase)",
+		Label:       "Enter Name for Group [nake_case] (Will be folder/file names of ds, repo, usecase)",
 		AllowEdit:   true,
 		Validate:    utils.ValidateEmptyString,
 		HideEntered: true,

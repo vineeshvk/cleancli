@@ -37,7 +37,7 @@ func GetAPIInfos(mainDirModel models.MainDirectoryModel) models.ApiInfoModel {
 
 func getAPIUrlInput() string {
 	prompt := promptui.Prompt{
-		Label:       "Enter API Url",
+		Label:       "Enter API Url (path params should be inside {})",
 		Default:     "v1/",
 		AllowEdit:   true,
 		Validate:    utils.ValidateEmptyString,
@@ -77,7 +77,7 @@ func getAPIMethodType() string {
 
 func getAPIName() string {
 	prompt := promptui.Prompt{
-		Label:       "Enter Name for Function",
+		Label:       "Enter Name for Function [camelCase]",
 		AllowEdit:   true,
 		Validate:    utils.ValidateEmptyString,
 		HideEntered: true,

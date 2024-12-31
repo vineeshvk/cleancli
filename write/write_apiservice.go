@@ -3,6 +3,7 @@ package write
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/models"
@@ -12,7 +13,7 @@ import (
 
 func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
 
-	fmt.Sprintln(constants.LoadingIcon, " Working on api_service file...")
+	fmt.Println(constants.LoadingIcon, " Working on api_service file...")
 
 	reqImport, resImport := apiInfo.GetRequestResponseImport()
 	importString := reqImport + "\n" + resImport
@@ -20,8 +21,10 @@ func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
 	requestClassName := apiInfo.ApiClassNameValue.RequestModelClassName
 
+	params := getApiServiceParamsRequest(apiInfo)
+
 	if requestClassName != "" {
-		requestClassName = apiInfo.GetMethodAnnotation() + " " + requestClassName + " data"
+		params += apiInfo.GetMethodAnnotation() + " " + requestClassName + " data"
 	}
 
 	// TODO: Handle path params
@@ -31,7 +34,7 @@ func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
 		apiInfo.ApiUrl,
 		responseClassName,
 		apiInfo.FunctionName,
-		requestClassName,
+		strings.TrimSpace(params),
 	)
 
 	err := utils.InsertToFileBeforeLastBrace(apiServiceDir, apiString, importString)
@@ -43,4 +46,16 @@ func WriteApiService(apiServiceDir string, apiInfo models.ApiInfoModel) {
 
 	fmt.Println()
 
+}
+
+func getApiServiceParamsRequest(apiInfo models.ApiInfoModel) string {
+	params := ""
+
+	if len(apiInfo.GetPathParams()) > 0 {
+		for _, v := range apiInfo.GetPathParams() {
+			params += fmt.Sprintf(`@Path("%s") %s, `, v, utils.SnakeCaseToCamelCase(v))
+		}
+	}
+
+	return params
 }

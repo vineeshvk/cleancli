@@ -56,3 +56,17 @@ func CamelToSnake(camel string) string {
 		return "_" + strings.ToLower(s)
 	})
 }
+
+func SnakeCaseToCamelCase(text string) string {
+	camelCase := ""
+	for i, v := range strings.Split(text, "_") {
+		if i == 0 {
+			camelCase += v
+		} else {
+			camelCase += CapitilizeFirst(v)
+
+		}
+	}
+
+	return camelCase
+}

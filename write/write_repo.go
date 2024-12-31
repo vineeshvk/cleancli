@@ -2,6 +2,7 @@ package write
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/vineeshvk/cleancli/constants"
@@ -11,24 +12,29 @@ import (
 )
 
 func WriteRepo(mainDirModel models.MainDirectoryModel, apiInfo models.ApiInfoModel) {
-	dataRepoDir := mainDirModel.DataDir + constants.ApiRepositoryPath
-	domainRepoDir := mainDirModel.DomainDir + constants.ApiRepositoryPath
+	dataRepoDir := filepath.Join(mainDirModel.DataDir, constants.ApiRepositoryPath)
+	domainRepoDir := filepath.Join(mainDirModel.DomainDir, constants.ApiRepositoryPath)
 
-	fmt.Sprintln(constants.LoadingIcon, " Working on repository files...")
+	fmt.Println(constants.LoadingIcon, " Working on repository files...")
 
-	writeRepoAbstractFile(domainRepoDir, apiInfo)
-	writeRepoImplFile(dataRepoDir, apiInfo)
+	writeRepoAbstractFile(mainDirModel.DomainDir, domainRepoDir, apiInfo)
+	writeRepoImplFile(mainDirModel, dataRepoDir, apiInfo)
 }
 
-func writeRepoAbstractFile(domainRepoDir string, apiInfo models.ApiInfoModel) {
-	dataRepoFilePath := filepath.Join(
+func writeRepoAbstractFile(domainDir string, domainRepoDir string, apiInfo models.ApiInfoModel) {
+	domainRepoFilePath := filepath.Join(
 		domainRepoDir,
 		apiInfo.GroupName+"_repository.dart",
 	)
 
-	repoFileClassText := fmt.Sprintf(templates.RepoFileClass, apiInfo.GetApiClassName())
+	repoFileClassText := fmt.Sprintf(templates.RepoFileClass, apiInfo.GetApiClassName(), domainDir)
 
-	utils.CreateAndInsertIfFileNotExist(dataRepoFilePath, repoFileClassText)
+	err := utils.CreateAndInsertIfFileNotExist(domainRepoFilePath, repoFileClassText)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	fmt.Println()
 
@@ -45,25 +51,41 @@ func writeRepoAbstractFile(domainRepoDir string, apiInfo models.ApiInfoModel) {
 		requestClassName,
 	)
 
-	utils.InsertToFileBeforeLastBrace(
-		dataRepoFilePath,
+	err = utils.InsertToFileBeforeLastBrace(
+		domainRepoFilePath,
 		repoFileFunction,
 		getReqResImportString(apiInfo),
 	)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	fmt.Println()
 
 }
 
-func writeRepoImplFile(dataRepoDir string, apiInfo models.ApiInfoModel) {
+func writeRepoImplFile(mainDirModel models.MainDirectoryModel, dataRepoDir string, apiInfo models.ApiInfoModel) {
 	dataRepoImplFilePath := filepath.Join(
 		dataRepoDir,
 		apiInfo.GroupName+"_repository_impl.dart",
 	)
 
-	repoImplFileClassText := fmt.Sprintf(templates.RepoImplFileClass, apiInfo.GroupName, apiInfo.GetApiClassName())
+	repoImplFileClassText := fmt.Sprintf(
+		templates.RepoImplFileClass,
+		apiInfo.GroupName,
+		apiInfo.GetApiClassName(),
+		mainDirModel.DataDir,
+		mainDirModel.DomainDir,
+	)
 
-	utils.CreateAndInsertIfFileNotExist(dataRepoImplFilePath, repoImplFileClassText)
+	err := utils.CreateAndInsertIfFileNotExist(dataRepoImplFilePath, repoImplFileClassText)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	fmt.Println()
 
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
@@ -82,11 +104,17 @@ func writeRepoImplFile(dataRepoDir string, apiInfo models.ApiInfoModel) {
 		params,
 	)
 
-	utils.InsertToFileBeforeLastBrace(
+	err = utils.InsertToFileBeforeLastBrace(
 		dataRepoImplFilePath,
 		repoFileFunction,
 		getReqResImportString(apiInfo),
 	)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	fmt.Println()
 
 }

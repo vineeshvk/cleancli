@@ -22,7 +22,7 @@ func getApiResponseModel(dataDir string) string {
 
 	promptSelect := promptui.Select{
 		Items:             responseFileList,
-		Label:             "Select the Response model from List",
+		Label:             "Select the Response model from List (Also used for path params)",
 		Size:              10,
 		StartInSearchMode: true,
 		HideSelected:      true,
