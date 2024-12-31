@@ -2,7 +2,9 @@ package write
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/models"
@@ -13,10 +15,10 @@ import (
 func WriteDataSource(dataDir string, apiInfo models.ApiInfoModel) {
 	var dataSourceDir = filepath.Join(dataDir, constants.ApiDataSourcePath)
 
-	fmt.Sprintln(constants.LoadingIcon, " Working on data source files...")
+	fmt.Println(constants.LoadingIcon, " Working on data source files...")
 
 	writeDataSourceAbstractFile(dataSourceDir, apiInfo)
-	writeDataSourceImplFile(dataSourceDir, apiInfo)
+	writeDataSourceImplFile(dataDir, dataSourceDir, apiInfo)
 }
 
 func writeDataSourceAbstractFile(dataSourceDir string, apiInfo models.ApiInfoModel) {
@@ -28,7 +30,13 @@ func writeDataSourceAbstractFile(dataSourceDir string, apiInfo models.ApiInfoMod
 
 	dataSourceFileClassText := fmt.Sprintf(templates.DataSourceFileClass, apiInfo.GetApiClassName())
 
-	utils.CreateAndInsertIfFileNotExist(dataSourceFilePath, dataSourceFileClassText)
+	err := utils.CreateAndInsertIfFileNotExist(dataSourceFilePath, dataSourceFileClassText)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	fmt.Println()
 
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
@@ -44,16 +52,23 @@ func writeDataSourceAbstractFile(dataSourceDir string, apiInfo models.ApiInfoMod
 		requestClassName,
 	)
 
-	utils.InsertToFileBeforeLastBrace(
+	err = utils.InsertToFileBeforeLastBrace(
 		dataSourceFilePath,
 		dataSourceFileFunction,
 		getReqResImportString(apiInfo),
 	)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	fmt.Println()
 
 }
 
-func writeDataSourceImplFile(dataSourceDir string, apiInfo models.ApiInfoModel) {
+func writeDataSourceImplFile(dataDir string, dataSourceDir string, apiInfo models.ApiInfoModel) {
+
 	dataSourceImplFilePath := filepath.Join(
 		dataSourceDir,
 		apiInfo.GroupName,
@@ -65,17 +80,26 @@ func writeDataSourceImplFile(dataSourceDir string, apiInfo models.ApiInfoModel) 
 		templates.DataSourceImplFileClass,
 		apiInfo.GroupName,
 		apiInfo.GetApiClassName(),
+		dataDir,
 	)
 
-	utils.CreateAndInsertIfFileNotExist(dataSourceImplFilePath, dataSourceImplFileClassText)
+	err := utils.CreateAndInsertIfFileNotExist(dataSourceImplFilePath, dataSourceImplFileClassText)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	fmt.Println()
 
 	responseClassName := apiInfo.ApiClassNameValue.ResponseModelClassName
 	requestClassName := apiInfo.ApiClassNameValue.RequestModelClassName
-	var params string
+
+	params := getDSParamsRequest(apiInfo)
+
 	if requestClassName != "" {
 		requestClassName = requestClassName + " data"
-		params = "data"
+		params += "data"
 	}
 
 	dataSourceImplFileFunction := fmt.Sprintf(
@@ -83,14 +107,20 @@ func writeDataSourceImplFile(dataSourceDir string, apiInfo models.ApiInfoModel) 
 		responseClassName,
 		apiInfo.FunctionName,
 		requestClassName,
-		params,
+		strings.TrimSpace(params),
 	)
 
-	utils.InsertToFileBeforeLastBrace(
+	err = utils.InsertToFileBeforeLastBrace(
 		dataSourceImplFilePath,
 		dataSourceImplFileFunction,
 		getReqResImportString(apiInfo),
 	)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	fmt.Println()
 
 }
@@ -98,4 +128,16 @@ func writeDataSourceImplFile(dataSourceDir string, apiInfo models.ApiInfoModel) 
 func getReqResImportString(apiInfo models.ApiInfoModel) string {
 	reqImport, resImport := apiInfo.GetRequestResponseImport()
 	return reqImport + "\n" + resImport
+}
+
+func getDSParamsRequest(apiInfo models.ApiInfoModel) string {
+	params := ""
+
+	if len(apiInfo.GetPathParams()) > 0 {
+		for _, v := range apiInfo.GetPathParams() {
+			params += fmt.Sprintf(`data.%s, `, utils.SnakeCaseToCamelCase(v))
+		}
+	}
+
+	return params
 }

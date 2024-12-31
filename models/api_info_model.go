@@ -1,6 +1,10 @@
 package models
 
-import "github.com/vineeshvk/cleancli/utils"
+import (
+	"regexp"
+
+	"github.com/vineeshvk/cleancli/utils"
+)
 
 type ApiInfoModel struct {
 	ApiUrl       string
@@ -58,4 +62,19 @@ func (apiInfo ApiInfoModel) GetRequestResponseImport() (req string, res string) 
 		reqImport = utils.GetImportRoute(apiInfo.RequestModelPath)
 	}
 	return reqImport, utils.GetImportRoute(apiInfo.ResponseModelPath)
+}
+
+func (apiInfo ApiInfoModel) GetPathParams() []string {
+	r := regexp.MustCompile(`{(\w+)}`)
+	matches := r.FindAllStringSubmatch(apiInfo.ApiUrl, -1)
+
+	params := []string{}
+
+	for _, match := range matches {
+		if len(match) > 1 {
+			params = append(params, match[1])
+		}
+	}
+
+	return params
 }

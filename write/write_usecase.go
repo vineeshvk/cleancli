@@ -2,6 +2,7 @@ package write
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/vineeshvk/cleancli/constants"
@@ -11,7 +12,7 @@ import (
 )
 
 func WriteUseCase(mainDirModel models.MainDirectoryModel, apiInfo models.ApiInfoModel) {
-	fmt.Sprintln(constants.LoadingIcon, " Working on usecase file...")
+	fmt.Println(constants.LoadingIcon, " Working on usecase file...")
 
 	useCasePath := filepath.Join(
 		mainDirModel.DomainDir,
@@ -42,12 +43,19 @@ func WriteUseCase(mainDirModel models.MainDirectoryModel, apiInfo models.ApiInfo
 		paramsPassingString,
 		useCaseParamFuncString,
 		apiInfo.GroupName,
+		mainDirModel.DomainDir,
 	)
 
-	utils.CreateAndInsertIfFileNotExist(
+	err := utils.CreateAndInsertIfFileNotExist(
 		useCasePath,
 		useCaseClassString,
 	)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	fmt.Println()
 
 }
