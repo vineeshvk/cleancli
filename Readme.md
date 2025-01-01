@@ -4,10 +4,7 @@
 
 ## Demo Video
 
-<video src="readme_assets/demo.mp4" controls="controls" style="max-width: 100%;">
-   Your browser does not support the video tag.
-</video>
-
+![Demo](readme_assets/demo.gif)
 
 ## Example Usage
 - Add the executable to the path 
