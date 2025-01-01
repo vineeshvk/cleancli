@@ -1,16 +1,23 @@
 # Flutter Clean Architecture CLI
 
-**CleanCli** is a command-line tool designed to simplify the creation of boilerplate code for projects following the Clean Architecture pattern. This tool, built in Go, is fast, safe, and user-friendly.
+**cleancli** is a command-line tool designed to simplify the creation of boilerplate code for projects following the Clean Architecture pattern. This tool, built in Go, is fast, safe, and user-friendly.
+
+## Demo Video
+
+<video src="readme_assets/demo.mp4" controls="controls" style="max-width: 100%;">
+   Your browser does not support the video tag.
+</video>
+
 
 ## Example Usage
 - Add the executable to the path 
  
 ```
-$ cleancli.exe (or) cleancli
+$ cleancli
 ```
 - When prompted, input details such as:
    - API URL: `v1/login/{type}`
-   - Request Model (Picker with search): `LoginRequest`
+   - Request Model (Picker with search): `LoginRequest` or `None`
    - Response Model (Picker with search): `LoginResponse`
    - Function Name: `userLogin`
    - File/Group Name: `user_authentication`
@@ -67,18 +74,18 @@ proj/
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/flutter-clean-architecture-cli.git
-   cd flutter-clean-architecture-cli
+   git clone https://github.com/vineeshvk/cleancli.git
+   cd cleancli
    ```
 
 2. Build the CLI:
    ```bash
-   go build -o flutter-clean-arch-cli
+   go build -o cleancli
    ```
 
 3. Run the CLI:
    ```bash
-   ./flutter-clean-arch-cli
+   ./cleancli
    ```
 
 ---
