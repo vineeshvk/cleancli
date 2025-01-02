@@ -70,7 +70,7 @@ func writeRepoDI(mainDirModel models.MainDirectoryModel, apiInfo models.ApiInfoM
 }
 
 func writeUseCaseDI(mainDirModel models.MainDirectoryModel, apiInfo models.ApiInfoModel) {
-	useCaseDiFilePath := filepath.Join(mainDirModel.DomainDir, "di", apiInfo.GroupName+"_use_case_provider.dart")
+	useCaseDiFilePath := filepath.Join(mainDirModel.DomainDir, "lib", "di", apiInfo.GroupName+"_use_case_provider.dart")
 
 	err := utils.CreateAndInsertIfFileNotExist(
 		useCaseDiFilePath,
@@ -119,7 +119,7 @@ func getDataSourceImport(mainDirModel models.MainDirectoryModel, apiInfo models.
 	dataSourceImplFileImport := filepath.Join(
 		dataSourceImportPath,
 		"remote",
-		apiInfo.GroupName+"_data_source.dart",
+		apiInfo.GroupName+"_data_source_impl.dart",
 	)
 
 	return utils.GetImportRoute(dataSourceAbFileImport) + "\n" + utils.GetImportRoute(dataSourceImplFileImport)
