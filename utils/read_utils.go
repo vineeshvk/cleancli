@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"gopkg.in/yaml.v3"
 )
 
 func DoesFileExist(path string) bool {
@@ -112,4 +114,43 @@ func GetClassNameFromFile(path string) string {
 
 	return ""
 
+}
+
+func DoesFolderExist(path string) bool {
+	info, err := os.Stat(path)
+	if os.IsExist(err) {
+		return true
+	}
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
+}
+
+func GetPackageName() (string, error) {
+	pubspecPath := "./pubspec.yaml"
+	// Open the pubspec.yaml file
+	file, err := os.Open(pubspecPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to open pubspec.yaml: %w", err)
+	}
+	defer file.Close()
+
+	// Parse the YAML content
+	var pubspec Pubspec
+	decoder := yaml.NewDecoder(file)
+	if err := decoder.Decode(&pubspec); err != nil {
+		return "", fmt.Errorf("failed to parse pubspec.yaml: %w", err)
+	}
+
+	if pubspec.Name == "" {
+		return "", fmt.Errorf("package name not found in pubspec.yaml")
+	}
+
+	return pubspec.Name, nil
+}
+
+// Structure to hold parsed pubspec.yaml data
+type Pubspec struct {
+	Name string `yaml:"name"`
 }
