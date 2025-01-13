@@ -71,7 +71,7 @@ func SnakeCaseToCamelCase(text string) string {
 	return camelCase
 }
 
-func SnakeToName(snake string) string {
+func SnakeCaseToName(snake string) string {
 	// Split the string by underscores
 	parts := strings.Split(snake, "_")
 

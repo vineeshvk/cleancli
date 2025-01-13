@@ -16,8 +16,8 @@ import (
 func main() {
 	var mainDirectoryModel models.MainDirectoryModel = dirvalid.ValidateRootDirectories()
 	// Check if a subcommand is provided
-	argsLength := len(os.Args)
-	if argsLength < 2 {
+	argsLen := len(os.Args)
+	if argsLen < 2 {
 		fmt.Println("Usage: cleancli <subcommand> [options]")
 		fmt.Println("Available subcommands: api, feature")
 		os.Exit(1)
@@ -69,18 +69,19 @@ func generateFeature(mainDirectoryModel models.MainDirectoryModel) {
 		os.Exit(1)
 	}
 
+	var featureInfo models.FeatureInfoModel = input.GetFeatureInfos()
+	fmt.Println(constants.LoadingIcon, " Creating feature page "+featureInfo.FeatureName)
+
 	if *ignoreRoutes {
 		// If the flag is set, skip generating route files
 		fmt.Println("Skipping route file generation.")
 	} else {
 		// If the flag is not set, proceed with generating route files
-		fmt.Println("Generating route files...")
+		write.WriteFeatureRoute(featureInfo, mainDirectoryModel.PackageName)
 
 	}
-	var featureInfo models.FeatureInfoModel = input.GetFeatureInfos()
-	fmt.Println(constants.LoadingIcon, " Creating feature "+featureInfo.FeatureName)
-	// utils.CreateNewFile("./lib/di/" + featureInfo.FeatureName + "_module.dart")
 	write.WriteFeatureDI(featureInfo, mainDirectoryModel.PackageName)
-	write.WriteFeatureRoute(featureInfo, mainDirectoryModel.PackageName)
 	write.WriteFeaturePages(featureInfo, mainDirectoryModel.PackageName)
+
+	fmt.Println(constants.CompletedIcon, "Completed adding New Feature Page.")
 }

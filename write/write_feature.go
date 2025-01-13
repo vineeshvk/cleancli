@@ -13,11 +13,10 @@ import (
 
 func WriteFeatureDI(featureInfo models.FeatureInfoModel, packageName string) {
 
-	fmt.Println(constants.LoadingIcon, "Analyzing feature ...")
+	fmt.Println(constants.LoadingIcon, "Creating Feature DI")
 
 	featureNameCamelCase := utils.SnakeCaseToCamelCase(featureInfo.FeatureName)
 
-	// 1: Directory or package name, 2: Group Name, 3: Provider Name, 4: Group Class Name
 	moduleString := fmt.Sprintf(
 		templates.FeatureDI,
 		packageName,
@@ -33,19 +32,29 @@ func WriteFeatureDI(featureInfo models.FeatureInfoModel, packageName string) {
 		os.Exit(1)
 	}
 
+	fmt.Println(constants.LoadingIcon, "Successfully created DI for "+featureInfo.FeatureName)
 	fmt.Println()
 }
 
 func WriteFeatureRoute(featureInfo models.FeatureInfoModel, packageName string) {
-	// Define the file path
+	fmt.Println(constants.LoadingIcon, "Creating Route in locations.dart file")
 	filePath := constants.LocationsPath
 
-	writeInBeamLocation(filePath, featureInfo)
+	// Read the file content
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		return
+	}
+
+	contentStr := string(content)
+
+	writeInBeamLocation(filePath, featureInfo, contentStr)
 
 	importString := fmt.Sprintf(templates.FeatureRouteImports, packageName, featureInfo.FeatureName)
 
 	className := utils.SnakeCaseToPascalCase(featureInfo.FeatureName)
-	name := utils.SnakeToName(featureInfo.FeatureName)
+	name := utils.SnakeCaseToName(featureInfo.FeatureName)
 
 	routeFunction := fmt.Sprintf(
 		templates.FeatureRoutes,
@@ -56,6 +65,8 @@ func WriteFeatureRoute(featureInfo models.FeatureInfoModel, packageName string) 
 
 	utils.AppendToFile(filePath, routeFunction, importString)
 
+	fmt.Println(constants.LoadingIcon, "Successfully added new location: "+className+"Location() in locations.dart file.")
+	fmt.Println()
 }
 
 func WriteFeaturePages(featureInfo models.FeatureInfoModel, packageName string) {
@@ -69,6 +80,7 @@ func writeFeaturePage(baseFilePath string, packageName string, featureName strin
 	filePath := baseFilePath + featureName + "_page.dart"
 	className := utils.SnakeCaseToPascalCase(featureName)
 	variableName := utils.SnakeCaseToCamelCase(featureName)
+	fmt.Println(constants.LoadingIcon, "Creating Feature Page: "+className+"Page()")
 
 	content := fmt.Sprintf(
 		templates.FeaturePage,
@@ -78,12 +90,20 @@ func writeFeaturePage(baseFilePath string, packageName string, featureName strin
 		variableName,
 	)
 
-	utils.CreateAndInsertIfFileNotExist(filePath, content)
+	err := utils.CreateAndInsertIfFileNotExist(filePath, content)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(constants.LoadingIcon, "Successfully created: "+className+"Page()")
+	fmt.Println()
 }
 
 func writeFeaturePageView(baseFilePath string, packageName string, featureName string) {
 	filePath := baseFilePath + featureName + "_page_view.dart"
 	className := utils.SnakeCaseToPascalCase(featureName)
+
+	fmt.Println(constants.LoadingIcon, "Creating Feature Page View: "+className+"PageView()")
 
 	content := fmt.Sprintf(
 		templates.FeaturePageView,
@@ -92,12 +112,20 @@ func writeFeaturePageView(baseFilePath string, packageName string, featureName s
 		className,
 	)
 
-	utils.CreateAndInsertIfFileNotExist(filePath, content)
+	err := utils.CreateAndInsertIfFileNotExist(filePath, content)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(constants.LoadingIcon, "Successfully created: "+className+"PageView()")
+	fmt.Println()
 }
 
 func writeFeaturePageViewModel(baseFilePath string, packageName string, featureName string) {
 	filePath := baseFilePath + featureName + "_page_view_model.dart"
 	className := utils.SnakeCaseToPascalCase(featureName)
+
+	fmt.Println(constants.LoadingIcon, "Creating Feature Page View Model: "+className+"PageViewModel()")
 
 	content := fmt.Sprintf(
 		templates.FeaturePageViewModel,
@@ -105,19 +133,17 @@ func writeFeaturePageViewModel(baseFilePath string, packageName string, featureN
 		className,
 	)
 
-	utils.CreateAndInsertIfFileNotExist(filePath, content)
-}
-
-func writeInBeamLocation(filePath string, featureInfo models.FeatureInfoModel) {
-	// Read the file content
-	content, err := os.ReadFile(filePath)
+	err := utils.CreateAndInsertIfFileNotExist(filePath, content)
 	if err != nil {
-		fmt.Printf("Error reading file: %v\n", err)
+		fmt.Println(err)
 		return
 	}
 
-	// Convert content to a string
-	contentStr := string(content)
+	fmt.Println(constants.LoadingIcon, "Successfully created: "+className+"PageViewModel()")
+	fmt.Println()
+}
+
+func writeInBeamLocation(filePath string, featureInfo models.FeatureInfoModel, contentStr string) {
 
 	// Find the beamLocations list
 	startIndex := strings.Index(contentStr, "beamLocations: [")
@@ -142,11 +168,9 @@ func writeInBeamLocation(filePath string, featureInfo models.FeatureInfoModel) {
 		contentStr[endIndex:]
 
 	// Write the updated content back to the file
-	err = os.WriteFile(filePath, []byte(updatedContent), 0644)
+	err := os.WriteFile(filePath, []byte(updatedContent), 0644)
 	if err != nil {
 		fmt.Printf("Error writing to file: %v\n", err)
 		return
 	}
-
-	fmt.Println("New location added successfully!")
 }

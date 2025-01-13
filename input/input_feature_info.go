@@ -30,7 +30,7 @@ func getFeatureName() string {
 
 	result, err := prompt.Run()
 
-	if utils.DoesFolderExist("./lib/feature/" + result) {
+	if utils.DoesFolderExist(constants.FeaturePagesPath + result) {
 		fmt.Println("Feature already exists, verify the name and try again")
 		return getFeatureName()
 	}
