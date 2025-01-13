@@ -127,12 +127,14 @@ func DoesFolderExist(path string) bool {
 	return info.IsDir()
 }
 
-func GetPackageName() (string, error) {
+func GetPackageName() string {
 	pubspecPath := "./pubspec.yaml"
 	// Open the pubspec.yaml file
 	file, err := os.Open(pubspecPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to open pubspec.yaml: %w", err)
+		errorStr := fmt.Errorf("failed to open pubspec.yaml: %w", err)
+		fmt.Println(errorStr)
+		return ""
 	}
 	defer file.Close()
 
@@ -140,14 +142,18 @@ func GetPackageName() (string, error) {
 	var pubspec Pubspec
 	decoder := yaml.NewDecoder(file)
 	if err := decoder.Decode(&pubspec); err != nil {
-		return "", fmt.Errorf("failed to parse pubspec.yaml: %w", err)
+		errorStr := fmt.Errorf("failed to parse pubspec.yaml: %w", err)
+		fmt.Println(errorStr)
+		return ""
 	}
 
 	if pubspec.Name == "" {
-		return "", fmt.Errorf("package name not found in pubspec.yaml")
+		errorStr := fmt.Errorf("package name not found in pubspec.yaml")
+		fmt.Println(errorStr)
+		return ""
 	}
 
-	return pubspec.Name, nil
+	return pubspec.Name
 }
 
 // Structure to hold parsed pubspec.yaml data

@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	var mainDirectoryModel models.MainDirectoryModel = dirvalid.ValidateRootDirectories()
 	// Check if a subcommand is provided
 	argsLength := len(os.Args)
 	if argsLength < 2 {
@@ -25,15 +26,15 @@ func main() {
 	// Get the subcommand
 	subcommand := os.Args[1]
 
-	handleSubcommand(subcommand)
+	handleSubcommand(subcommand, mainDirectoryModel)
 }
 
-func handleSubcommand(subcommand string) {
+func handleSubcommand(subcommand string, mainDirectoryModel models.MainDirectoryModel) {
 	switch subcommand {
 	case "api":
-		generateAPI()
+		generateAPI(mainDirectoryModel)
 	case "feature":
-		generateFeature()
+		generateFeature(mainDirectoryModel)
 	default:
 		fmt.Printf("Unknown subcommand: %s\n", subcommand)
 		fmt.Println("Available subcommands: api, feature")
@@ -41,9 +42,7 @@ func handleSubcommand(subcommand string) {
 	}
 }
 
-func generateAPI() {
-	var mainDirectoryModel models.MainDirectoryModel = dirvalid.ValidateRootDirectories()
-
+func generateAPI(mainDirectoryModel models.MainDirectoryModel) {
 	var apiInfo models.ApiInfoModel = input.GetAPIInfos(mainDirectoryModel)
 
 	write.WriteApiService(mainDirectoryModel.GetApiServiceRoute(), apiInfo)
@@ -57,7 +56,7 @@ func generateAPI() {
 	utils.ExecuteBuildRunner(mainDirectoryModel.DataDir)
 }
 
-func generateFeature() {
+func generateFeature(mainDirectoryModel models.MainDirectoryModel) {
 	// Define a FlagSet for the 'feature' subcommand
 	featureCmd := flag.NewFlagSet("feature", flag.ExitOnError)
 
@@ -81,6 +80,7 @@ func generateFeature() {
 	var featureInfo models.FeatureInfoModel = input.GetFeatureInfos()
 	fmt.Println(constants.LoadingIcon, " Creating feature "+featureInfo.FeatureName)
 	// utils.CreateNewFile("./lib/di/" + featureInfo.FeatureName + "_module.dart")
-	write.WriteFeatureDI("./lib/di/", featureInfo)
-	write.WriteFeatureRoute(featureInfo)
+	write.WriteFeatureDI(featureInfo, mainDirectoryModel.PackageName)
+	write.WriteFeatureRoute(featureInfo, mainDirectoryModel.PackageName)
+	write.WriteFeaturePages(featureInfo, mainDirectoryModel.PackageName)
 }

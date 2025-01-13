@@ -15,3 +15,7 @@ var UseCasePath = "/lib/usecase/"
 
 var DataSourceDIPath = "lib/di/network_module.dart"
 var RepoDIPath = "lib/di/repository_modules.dart"
+
+var LocationsPath = "./lib/main/locations.dart"
+var FeatureDIPath = "./lib/di/"
+var FeaturePagesPath = "./lib/feature/"

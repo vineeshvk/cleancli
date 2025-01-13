@@ -11,11 +11,10 @@ import (
 	"github.com/vineeshvk/cleancli/utils"
 )
 
-func WriteFeatureDI(diDir string, featureInfo models.FeatureInfoModel) {
+func WriteFeatureDI(featureInfo models.FeatureInfoModel, packageName string) {
 
-	fmt.Println(constants.LoadingIcon, " Working on api_service file...")
+	fmt.Println(constants.LoadingIcon, "Analyzing feature ...")
 
-	packageName, _ := utils.GetPackageName()
 	featureNameCamelCase := utils.SnakeCaseToCamelCase(featureInfo.FeatureName)
 
 	// 1: Directory or package name, 2: Group Name, 3: Provider Name, 4: Group Class Name
@@ -27,7 +26,7 @@ func WriteFeatureDI(diDir string, featureInfo models.FeatureInfoModel) {
 		utils.SnakeCaseToPascalCase(featureInfo.FeatureName),
 	)
 
-	err := utils.CreateAndInsertIfFileNotExist("./lib/di/"+featureInfo.FeatureName+"_module.dart", moduleString)
+	err := utils.CreateAndInsertIfFileNotExist(constants.FeatureDIPath+featureInfo.FeatureName+"_module.dart", moduleString)
 
 	if err != nil {
 		fmt.Println(err)
@@ -37,13 +36,79 @@ func WriteFeatureDI(diDir string, featureInfo models.FeatureInfoModel) {
 	fmt.Println()
 }
 
-func WriteFeatureRoute(featureInfo models.FeatureInfoModel) {
+func WriteFeatureRoute(featureInfo models.FeatureInfoModel, packageName string) {
 	// Define the file path
-	filePath := "./lib/main/locations.dart"
+	filePath := constants.LocationsPath
 
-	// Define the feature location to add
-	newLocation := featureInfo.FeatureName + "Location()"
+	writeInBeamLocation(filePath, featureInfo)
 
+	importString := fmt.Sprintf(templates.FeatureRouteImports, packageName, featureInfo.FeatureName)
+
+	className := utils.SnakeCaseToPascalCase(featureInfo.FeatureName)
+	name := utils.SnakeToName(featureInfo.FeatureName)
+
+	routeFunction := fmt.Sprintf(
+		templates.FeatureRoutes,
+		className,
+		name,
+		featureInfo.FeatureName,
+	)
+
+	utils.AppendToFile(filePath, routeFunction, importString)
+
+}
+
+func WriteFeaturePages(featureInfo models.FeatureInfoModel, packageName string) {
+	filePath := constants.FeaturePagesPath + featureInfo.FeatureName + "/"
+	writeFeaturePage(filePath, packageName, featureInfo.FeatureName)
+	writeFeaturePageView(filePath, packageName, featureInfo.FeatureName)
+	writeFeaturePageViewModel(filePath, packageName, featureInfo.FeatureName)
+}
+
+func writeFeaturePage(baseFilePath string, packageName string, featureName string) {
+	filePath := baseFilePath + featureName + "_page.dart"
+	className := utils.SnakeCaseToPascalCase(featureName)
+	variableName := utils.SnakeCaseToCamelCase(featureName)
+
+	content := fmt.Sprintf(
+		templates.FeaturePage,
+		packageName,
+		featureName,
+		className,
+		variableName,
+	)
+
+	utils.CreateAndInsertIfFileNotExist(filePath, content)
+}
+
+func writeFeaturePageView(baseFilePath string, packageName string, featureName string) {
+	filePath := baseFilePath + featureName + "_page_view.dart"
+	className := utils.SnakeCaseToPascalCase(featureName)
+
+	content := fmt.Sprintf(
+		templates.FeaturePageView,
+		packageName,
+		featureName,
+		className,
+	)
+
+	utils.CreateAndInsertIfFileNotExist(filePath, content)
+}
+
+func writeFeaturePageViewModel(baseFilePath string, packageName string, featureName string) {
+	filePath := baseFilePath + featureName + "_page_view_model.dart"
+	className := utils.SnakeCaseToPascalCase(featureName)
+
+	content := fmt.Sprintf(
+		templates.FeaturePageViewModel,
+		packageName,
+		className,
+	)
+
+	utils.CreateAndInsertIfFileNotExist(filePath, content)
+}
+
+func writeInBeamLocation(filePath string, featureInfo models.FeatureInfoModel) {
 	// Read the file content
 	content, err := os.ReadFile(filePath)
 	if err != nil {
@@ -69,9 +134,11 @@ func WriteFeatureRoute(featureInfo models.FeatureInfoModel) {
 	}
 	endIndex += startIndex
 
+	newLocation := utils.SnakeCaseToPascalCase(featureInfo.FeatureName) + "Location()"
+
 	// Prepare the updated content
 	updatedContent := contentStr[:endIndex] +
-		newLocation + "," +
+		"  " + newLocation + ", \n    " +
 		contentStr[endIndex:]
 
 	// Write the updated content back to the file

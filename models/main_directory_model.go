@@ -5,6 +5,7 @@ import "github.com/vineeshvk/cleancli/constants"
 type MainDirectoryModel struct {
 	DataDir   string
 	DomainDir string
+	PackageName string
 }
 
 func (dirModel MainDirectoryModel) GetApiServiceRoute() string {
