@@ -17,8 +17,9 @@ func ValidateRootDirectories() models.MainDirectoryModel {
 
 	dataDir := validateDataPubSpecPresent()
 	domainDir := validateDomainPubSpecPresent()
+	packageName := utils.GetPackageName()
 
-	return models.MainDirectoryModel{DataDir: dataDir, DomainDir: domainDir}
+	return models.MainDirectoryModel{DataDir: dataDir, DomainDir: domainDir, PackageName: packageName}
 
 }
 
