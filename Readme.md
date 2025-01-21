@@ -26,7 +26,6 @@ $ cleancli feature
 - When prompted, input details such as:
    - Feature Name(in snake_case): new_feature
 
-- The CLI will generate or update files in the appropriate directories, adhering to the Clean Architecture structure.
 
 ## Directory Structure
 
