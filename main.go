@@ -1,7 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
 
 	"github.com/vineeshvk/cleancli/constants"
 	"github.com/vineeshvk/cleancli/dirvalid"
@@ -13,7 +15,34 @@ import (
 
 func main() {
 	var mainDirectoryModel models.MainDirectoryModel = dirvalid.ValidateRootDirectories()
+	// Check if a subcommand is provided
+	argsLen := len(os.Args)
+	if argsLen < 2 {
+		fmt.Println("Usage: cleancli <subcommand> [options]")
+		fmt.Println("Available subcommands: api, feature")
+		os.Exit(1)
+	}
 
+	// Get the subcommand
+	subcommand := os.Args[1]
+
+	handleSubcommand(subcommand, mainDirectoryModel)
+}
+
+func handleSubcommand(subcommand string, mainDirectoryModel models.MainDirectoryModel) {
+	switch subcommand {
+	case "api":
+		generateAPI(mainDirectoryModel)
+	case "feature":
+		generateFeature(mainDirectoryModel)
+	default:
+		fmt.Printf("Unknown subcommand: %s\n", subcommand)
+		fmt.Println("Available subcommands: api, feature")
+		os.Exit(1)
+	}
+}
+
+func generateAPI(mainDirectoryModel models.MainDirectoryModel) {
 	var apiInfo models.ApiInfoModel = input.GetAPIInfos(mainDirectoryModel)
 
 	write.WriteApiService(mainDirectoryModel.GetApiServiceRoute(), apiInfo)
@@ -25,5 +54,34 @@ func main() {
 	fmt.Println(constants.CompletedIcon, "Completed adding API.")
 
 	utils.ExecuteBuildRunner(mainDirectoryModel.DataDir)
+}
 
+func generateFeature(mainDirectoryModel models.MainDirectoryModel) {
+	// Define a FlagSet for the 'feature' subcommand
+	featureCmd := flag.NewFlagSet("feature", flag.ExitOnError)
+
+	// Add an optional flag --ignore-routes
+	ignoreRoutes := featureCmd.Bool("ignore-routes", false, "Ignore generating route files")
+
+	// Parse the flags
+	if err := featureCmd.Parse(os.Args[2:]); err != nil {
+		fmt.Printf("Error parsing flags for 'feature': %v\n", err)
+		os.Exit(1)
+	}
+
+	var featureInfo models.FeatureInfoModel = input.GetFeatureInfos()
+	fmt.Println(constants.LoadingIcon, " Creating feature page "+featureInfo.FeatureName)
+
+	if *ignoreRoutes {
+		// If the flag is set, skip generating route files
+		fmt.Println("Skipping route file generation.")
+	} else {
+		// If the flag is not set, proceed with generating route files
+		write.WriteFeatureRoute(featureInfo, mainDirectoryModel.PackageName)
+
+	}
+	write.WriteFeatureDI(featureInfo, mainDirectoryModel.PackageName)
+	write.WriteFeaturePages(featureInfo, mainDirectoryModel.PackageName)
+
+	fmt.Println(constants.CompletedIcon, "Completed adding New Feature Page.")
 }

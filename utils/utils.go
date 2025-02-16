@@ -70,3 +70,18 @@ func SnakeCaseToCamelCase(text string) string {
 
 	return camelCase
 }
+
+func SnakeCaseToName(snake string) string {
+	// Split the string by underscores
+	parts := strings.Split(snake, "_")
+
+	// Capitalize the first letter of each part
+	for i, part := range parts {
+		if len(part) > 0 {
+			parts[i] = strings.ToUpper(string(part[0])) + part[1:]
+		}
+	}
+
+	// Join the parts with a space
+	return strings.Join(parts, " ")
+}

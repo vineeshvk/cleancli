@@ -10,7 +10,7 @@
 - Add the executable to the path 
  
 ```
-$ cleancli
+$ cleancli api
 ```
 - When prompted, input details such as:
    - API URL: `v1/login/{type}`
@@ -18,12 +18,20 @@ $ cleancli
    - Response Model (Picker with search): `LoginResponse`
    - Function Name: `userLogin`
    - File/Group Name: `user_authentication`
+<br></br>
+```
+$ cleancli feature
+```
+- In case the route is not needed for the feature, add the flag __*--ignore-routes*__ to the command
+- When prompted, input details such as:
+   - Feature Name(in snake_case): new_feature
 
-- The CLI will generate or update files in the appropriate directories, adhering to the Clean Architecture structure.
 
 ## Directory Structure
 
-Here’s an example of the directory structure that is needed to us this tool
+Here’s an example of the directory structure that is needed to use this tool
+
+- API
 
 ```
 proj/
@@ -41,6 +49,17 @@ proj/
     └── repository/
 ```
 
+- Feature
+```
+proj/
+└── lib/
+    ├── feature/
+    │
+    main/
+    │
+    └── locations.dart
+```
+
 ---
 
 ## Features
@@ -50,6 +69,7 @@ proj/
     - Data source files (e.g., network, local source) along with implementations and providers.
     - Repository files with their implementations and providers.
     - Use cases and their respective providers.
+    - Feature Pages, Views, View Models and Locations.
   - Accepts minimal inputs such as:
     - API URL
     - Request model
