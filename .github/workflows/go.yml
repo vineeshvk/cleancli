@@ -21,8 +21,16 @@ jobs:
       with:
         go-version: '1.23.4'
 
-    - name: Build
-      run: go build -v ./...
+    - name: Build for Windows x64
+      run: |
+        GOOS=windows GOARCH=amd64 go build -o myapp.exe .
+      
+    - name: Upload Windows Binary
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: myapp-windows
+        path: myapp.exe
 
-    - name: Test
-      run: go test -v ./...
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v4.1.8
+          
